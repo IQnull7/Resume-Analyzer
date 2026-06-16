@@ -1,118 +1,109 @@
 function ScoreDisplay({ score }) {
-    const color = score >= 80 ? "#22c55e" : score >= 50 ? "#f97316" : "#ef4444";
-    const label = score >= 80 ? "Good" : score >= 50 ? "Needs Work" : "Poor";
+    const color = score >= 70 ? "text-emerald-500" : score >= 40 ? "text-amber-500" : "text-red-500";
+    const bgRing = score >= 70 ? "border-emerald-200 bg-emerald-50" : score >= 40 ? "border-amber-200 bg-amber-50" : "border-red-200 bg-red-50";
+    const label = score >= 70 ? "Good" : score >= 40 ? "Needs Work" : "Poor";
 
     return (
-        <div style={{ textAlign: "center", margin: "24px 0", padding: "24px",
-                      background: "#f9fafb", borderRadius: "12px" }}>
-            <div style={{ fontSize: "64px", fontWeight: "bold", color }}>
+        <div className={`text-center py-8 px-6 rounded-2xl border-2 ${bgRing}`}>
+            <div className={`text-7xl font-extrabold ${color}`}>
                 {score}
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600", color }}>
+            <div className={`text-xl font-semibold mt-2 ${color}`}>
                 ATS Score — {label}
             </div>
-            <div style={{ color: "#6b7280", fontSize: "14px", marginTop: "8px" }}>
-                Out of 100
-            </div>
+            <div className="text-sm text-slate-400 mt-1">Out of 100</div>
         </div>
     );
 }
+
 function ResultsPanel({ analysis }) {
     if (!analysis) return null;
 
     return (
-        <div style={{ marginTop: "32px" }}>
+        <div className="mt-8 space-y-6">
 
             {/* ATS Score */}
             <ScoreDisplay score={analysis.ats_score} />
 
-            {/*Missing Sections */}
-            <section style={{ marginBottom: "24px" }}>
-                <h3>Missing Sections</h3>
+            {/* Missing Sections */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Missing Sections</h3>
                 {analysis.missing_sections.length === 0 ? (
-                    <p style={{ color: "#22c55e" }}>
-                        ✅ All major sections are present
-                    </p>
+                    <p className="text-emerald-600 font-medium">✅ All major sections are present</p>
                 ) : (
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <div className="flex flex-wrap gap-2">
                         {analysis.missing_sections.map((section, index) => (
-                            <span key={index} style={{
-                                background: "#fef2f2", color: "#dc2626",
-                                padding: "4px 12px", borderRadius: "99px",
-                                fontSize: "14px", border: "1px solid #fecaca"
-                            }}>
+                            <span
+                                key={index}
+                                className="px-3 py-1.5 text-sm font-medium bg-red-50 text-red-600 border border-red-200 rounded-full"
+                            >
                                 ❌ {section}
                             </span>
                         ))}
                     </div>
                 )}
-            </section>
+            </div>
 
-            {/* Verb Replacements */}
-            <section style={{ marginBottom: "24px" }}>
-                <h3>Weak Action Verbs</h3>
+            {/* Weak Action Verbs */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Weak Action Verbs</h3>
                 {Object.keys(analysis.suggested_replacements).length === 0 ? (
-                    <p style={{ color: "#22c55e" }}>✅ No weak verbs found</p>
+                    <p className="text-emerald-600 font-medium">✅ No weak verbs found</p>
                 ) : (
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                            <tr style={{ background: "#f3f4f6" }}>
-                                <th style={{ padding: "10px", textAlign: "left",
-                                             border: "1px solid #e5e7eb" }}>
-                                    Found in Resume
-                                </th>
-                                <th style={{ padding: "10px", textAlign: "left",
-                                             border: "1px solid #e5e7eb" }}>
-                                    Better Alternative
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(analysis.suggested_replacements).map(
-                                ([weak, strong], index) => (
-                                    <tr key={index}>
-                                        <td style={{ padding: "10px", color: "#ef4444",
-                                                     border: "1px solid #e5e7eb" }}>
-                                            {weak}
-                                        </td>
-                                        <td style={{ padding: "10px", color: "#22c55e",
-                                                     border: "1px solid #e5e7eb" }}>
-                                            {strong}
-                                        </td>
-                                    </tr>
-                                )
-                            )}
-                        </tbody>
-                    </table>
+                    <div className="overflow-hidden rounded-xl border border-slate-200">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="bg-slate-50">
+                                    <th className="px-4 py-3 text-left font-semibold text-slate-600 border-b border-slate-200">
+                                        Found in Resume
+                                    </th>
+                                    <th className="px-4 py-3 text-left font-semibold text-slate-600 border-b border-slate-200">
+                                        Better Alternative
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(analysis.suggested_replacements).map(
+                                    ([weak, strong], index) => (
+                                        <tr key={index} className="border-b border-slate-100 last:border-0">
+                                            <td className="px-4 py-3 text-red-500 font-medium">{weak}</td>
+                                            <td className="px-4 py-3 text-emerald-600 font-medium">{strong}</td>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
-            </section>
+            </div>
 
             {/* Section Feedback */}
-            <section style={{ marginBottom: "24px" }}>
-                <h3>Section Feedback</h3>
-                {analysis.section_feedback.map((item, index) => (
-                    <div key={index} style={{
-                        marginBottom: "12px", padding: "16px",
-                        border: "1px solid #e5e7eb", borderRadius: "8px",
-                        borderLeft: `4px solid ${item.present ? "#22c55e" : "#ef4444"}`
-                    }}>
-                        <div style={{ fontWeight: "600", marginBottom: "6px" }}>
-                            {item.present ? "✅" : "❌"} {item.section}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Section Feedback</h3>
+                <div className="space-y-3">
+                    {analysis.section_feedback.map((item, index) => (
+                        <div
+                            key={index}
+                            className={`p-4 rounded-xl border border-slate-100 border-l-4 ${
+                                item.present ? "border-l-emerald-400 bg-emerald-50/30" : "border-l-red-400 bg-red-50/30"
+                            }`}
+                        >
+                            <div className="font-semibold text-slate-800 mb-1">
+                                {item.present ? "✅" : "❌"} {item.section}
+                            </div>
+                            <p className="text-sm text-slate-600 leading-relaxed">{item.feedback}</p>
                         </div>
-                        <p style={{ color: "#374151", margin: 0 }}>{item.feedback}</p>
-                    </div>
-                ))}
-            </section>
+                    ))}
+                </div>
+            </div>
 
-            {/*Overall Summary */}
-            <section>
-                <h3>Overall Summary</h3>
-                <p style={{ lineHeight: "1.7", color: "#374151",
-                            padding: "16px", background: "#f9fafb",
-                            borderRadius: "8px" }}>
+            {/* Overall Summary */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Overall Summary</h3>
+                <p className="text-slate-600 leading-relaxed bg-slate-50 p-5 rounded-xl">
                     {analysis.overall_summary}
                 </p>
-            </section>
+            </div>
         </div>
     );
 }

@@ -1,43 +1,61 @@
 import { useDropzone } from "react-dropzone";
 
-function DropZone({ onFileSelected, isLoading}){
-    const{ getRootProps, getInputProps, isDragActive } = useDropzone({
+function DropZone({ onFileSelected, isLoading }) {
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: { "application/pdf": [".pdf"] },
         maxFiles: 1,
         disabled: isLoading,
-        onDrop: (acceptedFiles)=> {
+        onDrop: (acceptedFiles) => {
             if (acceptedFiles.length > 0) {
                 onFileSelected(acceptedFiles[0]);
             }
         }
     });
+
     return (
         <div
             {...getRootProps()}
-            style={{
-                border: `2px dashed ${isDragActive ? "#4a90e2" : "#ccc"}`,
-                borderRadius: "12px",
-                padding: "60px 40px",
-                textAlign: "center",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                backgroundColor: isDragActive ? "#f0f7ff" : "#fafafa",
-                transition: "all 0.2s ease",
-                opacity: isLoading ? 0.6 : 1,
-            }}
-        > <input {...getInputProps()} />
-        {isLoading ? (
-                <div>
-                    <p style={{ fontSize: "18px" }}>⏳ Analyzing your resume...</p>
-                    <p style={{ color: "#666", fontSize: "14px" }}>
+            className={`
+                relative border-2 border-dashed rounded-2xl p-14 text-center
+                transition-all duration-300 ease-in-out
+                ${isDragActive
+                    ? "border-indigo-400 bg-indigo-50 scale-[1.02] shadow-lg"
+                    : "border-slate-300 bg-white hover:border-indigo-300 hover:bg-slate-50 shadow-sm"
+                }
+                ${isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+            `}
+        >
+            <input {...getInputProps()} />
+
+            {isLoading ? (
+                <div className="space-y-3">
+                    {/* Spinner */}
+                    <div className="mx-auto w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                    <p className="text-lg font-medium text-slate-700">
+                        Analyzing your resume...
+                    </p>
+                    <p className="text-sm text-slate-400">
                         This usually takes 10–20 seconds
                     </p>
                 </div>
             ) : isDragActive ? (
-                <p style={{ fontSize: "18px" }}>📄 Drop it here!</p>
+                <div className="space-y-2">
+                    <p className="text-4xl">📄</p>
+                    <p className="text-lg font-medium text-indigo-600">
+                        Drop it here!
+                    </p>
+                </div>
             ) : (
-                <div>
-                    <p style={{ fontSize: "18px" }}>📎 Drag & drop your PDF resume here</p>
-                    <p style={{ color: "#888", fontSize: "14px" }}>or click to select a file</p>
+                <div className="space-y-3">
+                    <div className="mx-auto w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl">
+                        📎
+                    </div>
+                    <p className="text-lg font-medium text-slate-700">
+                        Drag & drop your PDF resume here
+                    </p>
+                    <p className="text-sm text-slate-400">
+                        or click to select a file
+                    </p>
                 </div>
             )}
         </div>
